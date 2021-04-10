@@ -16,7 +16,7 @@ package main
 
 import (
 	"context"
-	"crypto/sha512"
+	//"crypto/sha512"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -57,7 +57,7 @@ func parseArgs(args string) ([][2]string, error) {
 }
 
 func main() {
-	if len(os.Args) < 4 {
+	if len(os.Args) < 5 {
 		usage()
 		return
 	}
@@ -94,14 +94,15 @@ func main() {
 	}
 
 	netns := os.Args[3]
-	netns, err = filepath.Abs(netns)
-	if err != nil {
-		exit(err)
-	}
+	//netns, err = filepath.Abs(netns)
+	//if err != nil {
+	//	exit(err)
+	//}
 
 	// Generate the containerid by hashing the netns path
-	s := sha512.Sum512([]byte(netns))
-	containerID := fmt.Sprintf("cnitool-%x", s[:10])
+	//s := sha512.Sum512([]byte(netns))
+	//containerID := fmt.Sprintf("cnitool-%x", s[:10])
+	containerID := os.Args[4]
 
 	cninet := libcni.NewCNIConfig(filepath.SplitList(os.Getenv(EnvCNIPath)), nil)
 
@@ -132,9 +133,9 @@ func usage() {
 	exe := filepath.Base(os.Args[0])
 
 	fmt.Fprintf(os.Stderr, "%s: Add, check, or remove network interfaces from a network namespace\n", exe)
-	fmt.Fprintf(os.Stderr, "  %s add   <net> <netns>\n", exe)
-	fmt.Fprintf(os.Stderr, "  %s check <net> <netns>\n", exe)
-	fmt.Fprintf(os.Stderr, "  %s del   <net> <netns>\n", exe)
+	fmt.Fprintf(os.Stderr, "  %s add   <net> <netns> <ctrID>\n", exe)
+	fmt.Fprintf(os.Stderr, "  %s check <net> <netns> <ctrID>\n", exe)
+	fmt.Fprintf(os.Stderr, "  %s del   <net> <netns> <ctrID>\n", exe)
 	os.Exit(1)
 }
 
